@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaGraduationCap, FaCertificate, FaLock, FaUnlock } from 'react-icons/fa'
+import Magnetic from './Magnetic'
+import AnimatedHeading from './AnimatedHeading'
 
 const certs = [
   { name: 'Certified Ethical Hacker (CEH)', issuer: 'The Hope International Academy' },
@@ -34,7 +36,7 @@ export default function Education() {
       <div className="container">
         <div className="section-header">
           <span className="section-tag">05</span>
-          <h2 className="section-title">Education & Certifications</h2>
+          <AnimatedHeading text="Education & Certifications" className="section-title" />
           <div className="section-line" />
         </div>
 
@@ -43,9 +45,10 @@ export default function Education() {
             <div className="edu-grid">
               <motion.div
                 className="edu-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
               >
                 <div className="edu-icon"><FaGraduationCap /></div>
                 <h3>B.Sc. in Cybersecurity</h3>
@@ -55,10 +58,10 @@ export default function Education() {
 
               <motion.div
                 className="certs-card"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 24, filter: 'blur(6px)' }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <h3><FaCertificate /> Certifications</h3>
                 <ul>
@@ -83,9 +86,11 @@ export default function Education() {
                 transition={{ duration: 0.5 }}
               >
                 <div className="lock-box">
-                  <div className="lock-icon">
-                    {clicks >= REQUIRED_CLICKS ? <FaUnlock /> : <FaLock />}
-                  </div>
+                  <Magnetic strength={0.4}>
+                    <div className="lock-icon">
+                      {clicks >= REQUIRED_CLICKS ? <FaUnlock /> : <FaLock />}
+                    </div>
+                  </Magnetic>
                   <h3>Content Encrypted</h3>
                   <p className="lock-sub">
                     {remaining > 0

@@ -1,5 +1,7 @@
 import { motion } from 'framer-motion'
 import { FaEnvelope, FaPhone, FaLinkedinIn, FaMapMarkerAlt, FaPaperPlane } from 'react-icons/fa'
+import Magnetic from './Magnetic'
+import AnimatedHeading from './AnimatedHeading'
 
 const methods = [
   { icon: <FaEnvelope />, label: 'Email', value: 'mmnabrwi@gmail.com', href: 'mailto:mmnabrwi@gmail.com' },
@@ -14,14 +16,15 @@ export default function Contact() {
       <div className="container">
         <div className="section-header">
           <span className="section-tag">06</span>
-          <h2 className="section-title">Get In Touch</h2>
+          <AnimatedHeading text="Get In Touch" className="section-title" />
           <div className="section-line" />
         </div>
         <div className="contact-wrap">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -20, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
           >
             <p className="intro">
               I'm currently open to junior cybersecurity roles, SOC analyst positions,
@@ -51,16 +54,18 @@ export default function Contact() {
           </motion.div>
           <motion.div
             className="cta-card"
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: 20, scale: 0.96, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, x: 0, scale: 1, filter: 'blur(0px)' }}
             viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
             <h3>Ready to secure the future?</h3>
             <p>Whether it's a full-time role, internship, or collaboration — I'd love to hear from you.</p>
-            <a href="mailto:mmnabrwi@gmail.com" className="btn btn-primary btn-large">
-              <FaPaperPlane /> Send Email
-            </a>
+            <Magnetic strength={0.3}>
+              <a href="mailto:mmnabrwi@gmail.com" className="btn btn-primary btn-large">
+                Send Email <span className="btn-icon-wrap"><FaPaperPlane /></span>
+              </a>
+            </Magnetic>
           </motion.div>
         </div>
       </div>
@@ -70,19 +75,31 @@ export default function Contact() {
         .methods { display: flex; flex-direction: column; gap: 12px; }
         .method {
           display: flex; align-items: center; gap: 16px; padding: 16px 20px;
-          background: var(--surface); border: 1px solid var(--border); border-radius: 8px; transition: 0.25s;
+          background: var(--surface); border: 1px solid var(--border); border-radius: 8px; transition: 0.3s;
         }
-        .method:hover { border-color: rgba(34,211,238,0.3); background: var(--surface-hover); }
+        .method:hover { border-color: rgba(34,211,238,0.4); background: var(--surface-hover); transform: translateX(6px); }
         .m-icon {
           width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
           background: var(--accent-glow); border-radius: 10px; color: var(--accent); font-size: 1rem; flex-shrink: 0;
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
         }
+        .method:hover .m-icon { transform: scale(1.12) rotate(8deg); }
         .m-label { display: block; font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
         .m-value { font-size: 0.95rem; font-weight: 500; }
         .cta-card {
           background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-          padding: 40px 32px; text-align: center;
+          padding: 40px 32px; text-align: center; position: relative; overflow: hidden;
         }
+        .cta-card::before {
+          content: '';
+          position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+          background: conic-gradient(from 0deg, transparent, var(--accent) 90deg, transparent 200deg, #7c5cff 300deg, transparent);
+          -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          -webkit-mask-composite: xor; mask-composite: exclude;
+          animation: borderSpin 6s linear infinite;
+          opacity: 0.4;
+        }
+        @keyframes borderSpin { to { transform: rotate(360deg); } }
         .cta-card h3 { font-size: 1.3rem; margin-bottom: 12px; }
         .cta-card p { color: var(--text-muted); margin-bottom: 28px; font-size: 0.95rem; }
         @media (max-width: 960px) { .contact-wrap { grid-template-columns: 1fr; } }

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { FaBuilding } from 'react-icons/fa'
+import AnimatedHeading from './AnimatedHeading'
 
 export default function Experience() {
   return (
@@ -7,15 +8,16 @@ export default function Experience() {
       <div className="container">
         <div className="section-header">
           <span className="section-tag">03</span>
-          <h2 className="section-title">Experience</h2>
+          <AnimatedHeading text="Experience" className="section-title" />
           <div className="section-line" />
         </div>
         <div className="timeline">
           <motion.div
             className="timeline-item"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: -30, filter: 'blur(6px)' }}
+            whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="marker" />
             <div className="content">
@@ -45,11 +47,21 @@ export default function Experience() {
           background: var(--bg); border: 3px solid var(--accent);
           box-shadow: 0 0 12px rgba(34,211,238,0.4);
         }
+        .marker::after {
+          content: '';
+          position: absolute; inset: -6px; border-radius: 50%;
+          border: 2px solid var(--accent);
+          animation: markerPulse 2s ease-out infinite;
+        }
+        @keyframes markerPulse {
+          0% { transform: scale(0.7); opacity: 0.8; }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
         .content {
           background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-          padding: 28px; transition: border-color 0.25s;
+          padding: 28px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
         }
-        .content:hover { border-color: rgba(34,211,238,0.3); }
+        .content:hover { border-color: rgba(34,211,238,0.35); transform: translateX(4px); box-shadow: 0 14px 34px rgba(0,0,0,0.3); }
         .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
         .header h3 { font-size: 1.15rem; font-weight: 600; }
         .date {

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { FaDesktop, FaUserSecret, FaNetworkWired, FaSearch, FaCode, FaBrain, FaGlobe, FaWifi, FaFingerprint, FaCloud } from 'react-icons/fa'
+import AnimatedHeading from './AnimatedHeading'
 
 const categories = [
   { icon: <FaDesktop />, title: 'SIEM & SOC', tags: ['Splunk', 'LogRhythm', 'The Hive', 'Elasticsearch'] },
@@ -23,7 +24,7 @@ export default function Skills() {
       <div className="container">
         <div className="section-header">
           <span className="section-tag">02</span>
-          <h2 className="section-title">Technical Skills</h2>
+          <AnimatedHeading text="Technical Skills" className="section-title" />
           <div className="section-line" />
         </div>
         <div className="skills-grid">
@@ -31,11 +32,12 @@ export default function Skills() {
             <motion.div
               key={c.title}
               className="skill-card"
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, scale: 0.94, filter: 'blur(6px)' }}
+              whileInView={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -4 }}
+              transition={{ delay: i * 0.08, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -8, scale: 1.03 }}
+              style={{ animationDelay: `${i * 0.4}s` }}
             >
               <div className="skill-icon">{c.icon}</div>
               <h3>{c.title}</h3>
@@ -58,19 +60,27 @@ export default function Skills() {
         .skills-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
         .skill-card {
           background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-          padding: 24px; transition: border-color 0.25s, box-shadow 0.25s;
+          padding: 24px; transition: border-color 0.3s, box-shadow 0.3s;
+          animation: idleFloat 5s ease-in-out infinite;
         }
-        .skill-card:hover { border-color: rgba(34,211,238,0.3); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+        @keyframes idleFloat {
+          0%, 100% { margin-top: 0; }
+          50% { margin-top: -6px; }
+        }
+        .skill-card:hover { border-color: rgba(34,211,238,0.4); box-shadow: 0 16px 36px rgba(0,0,0,0.35), 0 0 24px rgba(34,211,238,0.12); }
         .skill-icon {
           width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
           background: var(--accent-glow); border-radius: 10px; color: var(--accent); font-size: 1.1rem; margin-bottom: 16px;
+          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
         }
+        .skill-card:hover .skill-icon { transform: scale(1.15) rotate(-6deg); }
         .skill-card h3 { font-size: 1rem; margin-bottom: 14px; font-weight: 600; }
         .tags { display: flex; flex-wrap: wrap; gap: 8px; }
         .tags span {
           font-size: 0.8rem; padding: 5px 12px; background: var(--bg); border: 1px solid var(--border);
-          border-radius: 20px; color: var(--text-muted); font-family: var(--mono);
+          border-radius: 20px; color: var(--text-muted); font-family: var(--mono); transition: 0.2s;
         }
+        .tags span:hover { border-color: var(--accent); color: var(--accent); }
         .protocols { text-align: center; }
         .protocols h4 {
           font-size: 0.9rem; color: var(--text-dim); margin-bottom: 16px; font-weight: 500;

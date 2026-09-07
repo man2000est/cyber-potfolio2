@@ -1,4 +1,10 @@
 import { useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
+import Preloader from './components/Preloader'
+import ScrollProgress from './components/ScrollProgress'
+import CursorFX from './components/CursorFX'
+import NetworkBackground from './components/NetworkBackground'
+import BackToTop from './components/BackToTop'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -15,9 +21,14 @@ export default function App() {
   }, [])
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
+      <Preloader />
+      <ScrollProgress />
+      <CursorFX />
+      <NetworkBackground />
       <div className="bg-grid" />
       <div className="bg-glow" />
+      <div className="noise-overlay" />
       <Navbar />
       <main>
         <Hero />
@@ -29,6 +40,7 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
-    </>
+      <BackToTop />
+    </MotionConfig>
   )
 }

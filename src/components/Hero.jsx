@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, useMotionValue, useSpring, useScroll, useTransform } from 'framer-motion'
 import { FaLinkedinIn, FaEnvelope, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaFolderOpen } from 'react-icons/fa'
+import Magnetic from './Magnetic'
 
 const roles = [
   'Junior Cybersecurity Analyst',
@@ -14,6 +15,39 @@ export default function Hero() {
   const [roleIdx, setRoleIdx] = useState(0)
   const [charIdx, setCharIdx] = useState(0)
   const [deleting, setDeleting] = useState(false)
+  const heroRef = useRef(null)
+
+  const px = useMotionValue(0)
+  const py = useMotionValue(0)
+  const rotX = useSpring(py, { stiffness: 80, damping: 20 })
+  const rotY = useSpring(px, { stiffness: 80, damping: 20 })
+
+  // Cinematic scroll-exit: hero content fades/lifts/blurs away as the page scrolls
+  // past it, instead of hard-cutting into the next section.
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const reduceMotion = typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const scrollOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0])
+  const scrollY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : -90])
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, reduceMotion ? 1 : 0.92])
+  const scrollBlurPx = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : 10])
+  const scrollFilter = useTransform(scrollBlurPx, (v) => `blur(${v}px)`)
+
+  useEffect(() => {
+    const canParallax = window.matchMedia('(hover: hover)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!canParallax || !heroRef.current) return
+    const el = heroRef.current
+    const onMove = (e) => {
+      const rect = el.getBoundingClientRect()
+      const relX = (e.clientX - rect.left) / rect.width - 0.5
+      const relY = (e.clientY - rect.top) / rect.height - 0.5
+      px.set(relX * 10)
+      py.set(relY * -10)
+    }
+    el.addEventListener('mousemove', onMove)
+    return () => el.removeEventListener('mousemove', onMove)
+  }, [px, py])
 
   useEffect(() => {
     const current = roles[roleIdx]
@@ -36,8 +70,11 @@ export default function Hero() {
   }, [charIdx, deleting, roleIdx])
 
   return (
-    <section id="home" className="hero">
-      <div className="hero-content">
+    <section id="home" className="hero" ref={heroRef}>
+      <motion.div
+        className="hero-content"
+        style={{ opacity: scrollOpacity, y: scrollY, scale: scrollScale, filter: scrollFilter }}
+      >
         <motion.p
           className="greeting"
           initial={{ opacity: 0, y: 20 }}
@@ -48,9 +85,9 @@ export default function Hero() {
         </motion.p>
         <motion.h1
           className="name"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
         >
           Mohammad Nabrawi
         </motion.h1>
@@ -86,12 +123,16 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.65 }}
         >
-          <a href="#contact" className="btn btn-primary">
-            <FaPaperPlane /> Get In Touch
-          </a>
-          <a href="#projects" className="btn btn-outline">
-            <FaFolderOpen /> View Projects
-          </a>
+          <Magnetic strength={0.3}>
+            <a href="#contact" className="btn btn-primary">
+              Get In Touch <span className="btn-icon-wrap"><FaPaperPlane /></span>
+            </a>
+          </Magnetic>
+          <Magnetic strength={0.3}>
+            <a href="#projects" className="btn btn-outline">
+              View Projects <span className="btn-icon-wrap"><FaFolderOpen /></span>
+            </a>
+          </Magnetic>
         </motion.div>
         <motion.div
           className="social"
@@ -105,13 +146,22 @@ export default function Hero() {
           <a href="mailto:mmnabrwi@gmail.com" aria-label="Email"><FaEnvelope /></a>
           <a href="tel:+962781325424" aria-label="Phone"><FaPhone /></a>
         </motion.div>
-      </div>
+      </motion.div>
 
       <motion.div
         className="hero-visual"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4, duration: 0.6 }}
+        style={{
+          rotateX: rotX,
+          rotateY: rotY,
+          transformPerspective: 1000,
+          opacity: scrollOpacity,
+          y: scrollY,
+          scale: scrollScale,
+          filter: scrollFilter,
+        }}
       >
         <div className="terminal">
           <div className="term-header">
@@ -130,6 +180,11 @@ export default function Hero() {
           </div>
         </div>
       </motion.div>
+
+      <div className="scroll-hint">
+        <span className="scroll-hint-line" />
+        <span>SCROLL</span>
+      </div>
 
       <style>{`
         .hero {
@@ -182,6 +237,23 @@ export default function Hero() {
         .out { color: var(--text-muted); padding-left: 16px; }
         .out.success { color: var(--success); }
         .blink { animation: blink 1s step-end infinite; }
+        .scroll-hint {
+          position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+          display: flex; flex-direction: column; align-items: center; gap: 8px;
+          font-family: var(--mono); font-size: 0.65rem; letter-spacing: 3px; color: var(--text-dim);
+        }
+        .scroll-hint-line {
+          width: 1px; height: 28px; background: linear-gradient(to bottom, var(--accent), transparent);
+          position: relative; overflow: hidden;
+        }
+        .scroll-hint-line::after {
+          content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+          background: var(--accent); animation: scrollDrip 1.8s ease-in-out infinite;
+        }
+        @keyframes scrollDrip {
+          0% { top: -100%; }
+          60%, 100% { top: 100%; }
+        }
         @media (max-width: 960px) {
           .hero { flex-direction: column; text-align: center; }
           .hero-content { max-width: 100%; }
@@ -192,6 +264,7 @@ export default function Hero() {
         @media (max-width: 480px) {
           .cta { flex-direction: column; }
           .btn { width: 100%; justify-content: center; }
+          .scroll-hint { display: none; }
         }
       `}</style>
     </section>

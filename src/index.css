@@ -6,7 +6,7 @@
   --border: #1e293b;
   --text: #e2e8f0;
   --text-muted: #94a3b8;
-  --text-dim: #64748b;
+  --text-dim: #7c8ba1;
   --accent: #22d3ee;
   --accent-dim: #0891b2;
   --accent-glow: rgba(34, 211, 238, 0.15);
@@ -15,6 +15,9 @@
   --mono: 'JetBrains Mono', monospace;
   --radius: 16px;
   --nav-h: 84px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 *, *::before, *::after {
@@ -101,13 +104,16 @@ strong { color: var(--accent); font-weight: 600; }
   font-size: 0.9rem;
   font-weight: 600;
   border-radius: 999px;
-  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.35s cubic-bezier(0.32, 0.72, 0, 1), background 0.35s;
+  transition: box-shadow 0.35s var(--ease-out), background 0.35s var(--ease-out), transform 0.35s var(--ease-out);
   cursor: pointer;
   border: none;
   font-family: var(--font);
 }
 
-.btn:active { transform: scale(0.97); }
+.btn:active {
+  transform: scale(0.97);
+  transition: transform 130ms var(--ease-out);
+}
 
 .btn-icon-wrap {
   width: 26px;

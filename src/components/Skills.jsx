@@ -37,7 +37,7 @@ export default function Skills() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.08, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ y: -8, scale: 1.03 }}
-              style={{ animationDelay: `${i * 0.4}s` }}
+              style={{ animationDelay: `${i * 0.4}s`, animationDuration: `${4.6 + (i % 3) * 0.5}s` }}
             >
               <div className="skill-icon">{c.icon}</div>
               <h3>{c.title}</h3>
@@ -61,7 +61,9 @@ export default function Skills() {
         .skill-card {
           background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
           padding: 24px; transition: border-color 0.3s, box-shadow 0.3s;
-          animation: idleFloat 5s ease-in-out infinite;
+          animation-name: idleFloat;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
         }
         @keyframes idleFloat {
           0%, 100% { margin-top: 0; }
@@ -71,7 +73,7 @@ export default function Skills() {
         .skill-icon {
           width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
           background: var(--accent-glow); border-radius: 10px; color: var(--accent); font-size: 1.1rem; margin-bottom: 16px;
-          transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+          transition: transform 0.3s var(--ease-out);
         }
         .skill-card:hover .skill-icon { transform: scale(1.15) rotate(-6deg); }
         .skill-card h3 { font-size: 1rem; margin-bottom: 14px; font-weight: 600; }

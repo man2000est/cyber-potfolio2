@@ -5,8 +5,8 @@ export default function Magnetic({ children, strength = 0.35, className = '' }) 
   const ref = useRef(null)
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const springX = useSpring(x, { stiffness: 150, damping: 15, mass: 0.1 })
-  const springY = useSpring(y, { stiffness: 150, damping: 15, mass: 0.1 })
+  const springX = useSpring(x, { duration: 0.35, bounce: 0 })
+  const springY = useSpring(y, { duration: 0.35, bounce: 0 })
 
   const handleMouseMove = (e) => {
     if (!ref.current) return
